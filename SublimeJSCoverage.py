@@ -44,7 +44,7 @@ def find_coverage_filename(coverage_dir):
 
 
 def read_coverage_report(file_path):
-    with open(file_path, 'r') as coverage_file:
+    with open(file_path, 'r', encoding='utf-8') as coverage_file:
         try:
             coverage_json = json.load(coverage_file)
             return coverage_json
