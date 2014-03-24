@@ -43,7 +43,7 @@ preprocessors: {
 
 //configure the reporter
 coverageReporter: {
-  type : 'html',
+  type : 'json',
   dir : 'coverage/'
 }
 ```
