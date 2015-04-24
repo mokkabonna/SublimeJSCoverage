@@ -111,7 +111,7 @@ class ShowJsCoverageCommand(sublime_plugin.TextCommand):
 
         for tested_file_name in report:
             tested_file_name2 = tested_file_name.replace("./", "")
-            if tested_file_name2 != relative_filename:
+            if not tested_file_name2.endswith(relative_filename):
                 continue
             debug("Found test report for file " + str(relative_filename))
             file_report = report.get(tested_file_name)
