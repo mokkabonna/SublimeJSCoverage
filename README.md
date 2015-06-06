@@ -9,6 +9,14 @@ Remove highlights: Super + Shift + C + X
 
 Plugin tries to find the latest coverage report in a closest "coverage" directory.
 
+Configuration
+=================
+We can also configure your where the plugin is going to look for coverage the information. Just go to Preferences > Package Settings > JS Coverage > Settings - User. The configuration should look something like:
+
+{
+    "coverageDir": "my_custom_coverage_dir"
+}
+
 
 Karma configuration
 ===================
