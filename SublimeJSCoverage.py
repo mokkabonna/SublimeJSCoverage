@@ -8,16 +8,19 @@ import sublime_plugin
 
 debug = lambda *args: sys.stdout.write("\n%s" % " ".join(map(str, args)))
 
-COVERAGE_DIR_NAME = 'coverage'
 REGION_KEY = 'SublimeJSCoverage'
 
+def getCoverageDir():
+    settings = sublime.load_settings("JSCoverage.sublime-settings")
+
+    return settings.get("coverageDir") or 'coverage'
 
 def find_project_root(file_path):
     """
         Project Root is defined as the parent directory 
         that contains a directory called 'coverage'
     """
-    if os.access(os.path.join(file_path, COVERAGE_DIR_NAME), os.R_OK):
+    if os.access(os.path.join(file_path, getCoverageDir()), os.R_OK):
         return file_path
     parent, current = os.path.split(file_path)
     if current:
@@ -73,7 +76,7 @@ class ShowJsCoverageCommand(sublime_plugin.TextCommand):
             return
 
         relative_filename = filename.replace(project_root + "/", "")
-        coverage_dir = os.path.join(project_root, COVERAGE_DIR_NAME)
+        coverage_dir = os.path.join(project_root, getCoverageDir())
         coverage_filename = find_coverage_filename(coverage_dir)
 
         debug("Display js coverage report for file", filename)
