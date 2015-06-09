@@ -55,15 +55,6 @@ def read_coverage_report(file_path):
         except IOError:
             return None
 
-def getLineExecutionTimes(fileReport, lineNumber):
-    lines = fileReport.get("l")
-
-    for curLineNumber in lines:
-        if int(curLineNumber) == lineNumber:
-            return int(lines.get(curLineNumber))
-
-    return 0
-
 class ShowJsCoverageCommand(sublime_plugin.TextCommand):
 
     """
