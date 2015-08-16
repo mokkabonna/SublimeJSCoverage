@@ -8,7 +8,8 @@ import sublime_plugin
 
 debug = lambda *args: sys.stdout.write("\n%s" % " ".join(map(str, args)))
 
-REGION_KEY = 'SublimeJSCoverage'
+REGION_KEY_COVERED = 'SublimeJSCoverageCovered'
+REGION_KEY_UNCOVERED = 'SublimeJSCoverageUnCovered'
 
 def getCoverageDir():
     settings = sublime.load_settings("JSCoverage.sublime-settings")
@@ -17,7 +18,7 @@ def getCoverageDir():
 
 def find_project_root(file_path):
     """
-        Project Root is defined as the parent directory 
+        Project Root is defined as the parent directory
         that contains a directory called 'coverage'
     """
     if os.access(os.path.join(file_path, getCoverageDir()), os.R_OK):
@@ -53,7 +54,6 @@ def read_coverage_report(file_path):
             return coverage_json
         except IOError:
             return None
-
 
 class ShowJsCoverageCommand(sublime_plugin.TextCommand):
 
@@ -95,7 +95,7 @@ class ShowJsCoverageCommand(sublime_plugin.TextCommand):
         view.erase_status("SublimeJSCoverage")
         view.erase_regions("SublimeJSCoverage")
 
-        outlines = []
+        outlines = {}
 
         report = read_coverage_report(
             os.path.join(coverage_dir, coverage_filename))
@@ -117,20 +117,34 @@ class ShowJsCoverageCommand(sublime_plugin.TextCommand):
             if not tested_file_name2.endswith(relative_filename):
                 continue
             debug("Found test report for file " + str(relative_filename))
-            file_report = report.get(tested_file_name)
-            lines = file_report.get("l")
-            for num in lines:
-                runs = int(lines.get(num))
-                num = int(num) - 1
-                if runs == 0:
-                    region = view.full_line(view.text_point(num, 0))
-                    outlines.append(region)
 
-        # update highlighted regions
-        if outlines:
-            view.add_regions(REGION_KEY, outlines,
-                             'markup.deleted.diff', 'bookmark', sublime.DRAW_OUTLINED)
+            fileReport = report.get(tested_file_name)
 
+            lines = fileReport.get("l")
+
+            for lineNumber in lines:
+                lineExecutionTimes = int(lines.get(lineNumber))
+
+                outlines[lineNumber] = lineExecutionTimes > 0
+
+        badOutlines = []
+        goodOutlines = []
+
+        for lineNumber in outlines:
+            region = view.full_line(view.text_point(int(lineNumber) - 1, 0))
+
+            if outlines[lineNumber]:
+                goodOutlines.append(region)
+            else:
+                badOutlines.append(region)
+
+        if goodOutlines:
+            view.add_regions(REGION_KEY_COVERED, goodOutlines,
+                'markup.inserted.diff', 'dot', sublime.HIDDEN)
+
+        if badOutlines:
+            view.add_regions(REGION_KEY_UNCOVERED, badOutlines,
+                'markup.deleted.diff', 'dot', sublime.HIDDEN)
 
 class ClearJsCoverageCommand(sublime_plugin.TextCommand):
 
@@ -140,4 +154,5 @@ class ClearJsCoverageCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
         view = self.view
-        view.erase_regions(REGION_KEY)
+        view.erase_regions(REGION_KEY_COVERED)
+        view.erase_regions(REGION_KEY_UNCOVERED)
