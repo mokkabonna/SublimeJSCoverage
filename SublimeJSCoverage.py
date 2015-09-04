@@ -162,14 +162,14 @@ class EventListener(sublime_plugin.EventListener):
     """
         Automatically shows highlights on activate post save and on load.
     """
-    def on_load(self, view):
+    def on_load_async(self, view):
         view.run_command("show_js_coverage")
 
-    def on_post_save(self, view):
+    def on_post_save_async(self, view):
         view.run_command("show_js_coverage")
 
-    def on_modified(self, view):
+    def on_activated_async(self, view):
         view.run_command("show_js_coverage")
 
-    def on_activated(self, view):
+    def on_deactivated_async(self, view):
         view.run_command("show_js_coverage")
