@@ -144,7 +144,7 @@ class ShowJsCoverageCommand(sublime_plugin.TextCommand):
 
         if badOutlines:
             view.add_regions(REGION_KEY_UNCOVERED, badOutlines,
-                'markup.deleted.diff', 'dot', sublime.HIDDEN)
+                'markup.deleted.diff', 'dot', sublime.DRAW_OUTLINED)
 
 class ClearJsCoverageCommand(sublime_plugin.TextCommand):
 
