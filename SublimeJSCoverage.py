@@ -156,3 +156,20 @@ class ClearJsCoverageCommand(sublime_plugin.TextCommand):
         view = self.view
         view.erase_regions(REGION_KEY_COVERED)
         view.erase_regions(REGION_KEY_UNCOVERED)
+
+class EventListener(sublime_plugin.EventListener):
+
+    """
+        Automatically shows highlights on activate post save and on load.
+    """
+    def on_load(self, view):
+        view.run_command("show_js_coverage")
+
+    def on_post_save(self, view):
+        view.run_command("show_js_coverage")
+
+    def on_modified(self, view):
+        view.run_command("show_js_coverage")
+
+    def on_activated(self, view):
+        view.run_command("show_js_coverage")
